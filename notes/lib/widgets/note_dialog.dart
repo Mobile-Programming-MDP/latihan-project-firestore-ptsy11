@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:notes/models/note.dart';
 import 'package:notes/services/note_service.dart';
 
 class NoteDialog extends StatelessWidget {
-  final Map<String, dynamic>? note;
+  final Note? note;
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
-  const NoteDialog({super.key});
-  if (note != Null) {
-    _titleController.text = note! ['title'];
-    _descriptionController.text = note! ['description'];
+  NoteDialog({super.key, this.note}) {
+    if (note != null) {
+      _titleController.text = note!.title;
+      _descriptionController.text = note!.description;
+    }
   }
 
   @override
@@ -20,7 +22,7 @@ class NoteDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Title',
+            'Title: ',
             textAlign: TextAlign.start,
           ),
           TextField(
@@ -29,43 +31,44 @@ class NoteDialog extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.only(top: 20),
             child: Text(
-              'Description',
-              textAlign: TextAlign.start,
+              'Description: ',
             ),
-            ),
-            TextField(
-              controller: _descriptionController,
-            ),
+          ),
+          TextField(
+            controller: _descriptionController,
+          ),
         ],
       ),
       actions: [
-        Padding(padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: ElevatedButton(
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Cancel'),
+          ),
+        ),
+        ElevatedButton(
           onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: const Text('Cancel'),
-        ),
-        ),
-        ElevatedButton(onPressed: (){
-          if (note == null) {
-            NoteService.addNote(
-              _titleController.text, _descriptionController.text)
-              .whenComplete(() {
+            if (note == null) {
+              NoteService.addNote(Note(
+                title: _titleController.text,
+                description: _descriptionController.text,
+              )).whenComplete(() {
                 Navigator.of(context).pop();
               });
-          } else {
-            NoteService.updateNote(
-              note!['id'],
-              _titleController.text,
-              _descriptionController.text,
-            ).whenComplete(() {
-              Navigator.of(context).pop();
-            });
-          }
-        },
-        child: Text(note == null ? 'Add' : 'Update'),
-        )
+            } else {
+              NoteService.updateNote(Note(
+                id: note!.id,
+                title: _titleController.text,
+                description: _descriptionController.text,
+                createdAt: note!.createdAt,
+              )).whenComplete(() => Navigator.of(context).pop());
+            }
+          },
+          child: Text(note == null ? 'Add' : 'Update'),
+        ),
       ],
     );
   }
