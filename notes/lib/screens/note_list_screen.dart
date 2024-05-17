@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:notes/models/note.dart';
-import 'package:notes/services/note_service.dart';
-import 'package:notes/widgets/note_dialog.dart';
+import 'package:notesapp/models/note.dart';
+import 'package:notesapp/services/note_service.dart';
+import 'package:notesapp/widgets/note_dialog.dart';
 
 class NoteListScreen extends StatefulWidget {
-  const NoteListScreen({super.key});
+  const NoteListScreen({Key? key});
 
   @override
   State<NoteListScreen> createState() => _NoteListScreenState();
@@ -35,11 +35,11 @@ class _NoteListScreenState extends State<NoteListScreen> {
 }
 
 class NoteList extends StatelessWidget {
-  const NoteList({super.key});
+  const NoteList({Key? key});
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
+    return StreamBuilder<List<Note>>(
       stream: NoteService.getNoteList(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
@@ -53,28 +53,48 @@ class NoteList extends StatelessWidget {
           default:
             return ListView(
               padding: const EdgeInsets.only(bottom: 80),
-              children: snapshot.data!.map((document) {
+              children: snapshot.data!.map<Widget>((document) {
                 return Card(
-                  child: ListTile(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return NoteDialog(note: document);
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ListTile(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return NoteDialog(note: document);
+                            },
+                          );
                         },
-                      );
-                    },
-                    title: Text(document.title),
-                    subtitle: Text(document.description),
-                    trailing: InkWell(
-                      onTap: () {
-                        showAlertDialog(context, document);
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        child: Icon(Icons.delete),
+                        title: Text(document.title),
+                        subtitle: Text(document.description),
+                        trailing: InkWell(
+                          onTap: () {
+                            showAlertDialog(context, document);
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            child: Icon(Icons.delete),
+                          ),
+                        ),
                       ),
-                    ),
+                      if (document.imageUrl != null &&
+                          Uri.parse(document.imageUrl!).isAbsolute)
+                        ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(8),
+                            bottomRight: Radius.circular(8),
+                          ),
+                          child: Image.network(
+                            document.imageUrl!,
+                            width: double.infinity,
+                            height: 150,
+                            fit: BoxFit.cover,
+                            alignment: Alignment.center,
+                          ),
+                        ),
+                    ],
                   ),
                 );
               }).toList(),
@@ -84,7 +104,7 @@ class NoteList extends StatelessWidget {
     );
   }
 
-  showAlertDialog(BuildContext context, Note document) {
+  void showAlertDialog(BuildContext context, Note document) {
     // set up the buttons
     Widget cancelButton = ElevatedButton(
       child: const Text("No"),

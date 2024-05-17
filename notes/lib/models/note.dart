@@ -4,6 +4,10 @@ class Note {
   String? id;
   final String title;
   final String description;
+  // KARENA OPSIONAL BOLEH ADA BOLEH NGGAK
+  String? imageUrl;
+  String? lat;
+  String? lng;
   Timestamp? createdAt;
   Timestamp? updatedAt;
 
@@ -11,6 +15,9 @@ class Note {
     this.id,
     required this.title,
     required this.description,
+    this.imageUrl,
+    this.lat,
+    this.lng,
     this.createdAt,
     this.updatedAt,
   });
@@ -21,6 +28,9 @@ class Note {
       id: doc.id,
       title: data['title'],
       description: data['description'],
+      imageUrl: data['image_url'],
+      lat: data['lat'],
+      lng: data['lng'],
       createdAt: data['created_at'] as Timestamp,
       updatedAt: data['updated_at'] as Timestamp,
     );
@@ -30,6 +40,9 @@ class Note {
     return {
       'title': title,
       'description': description,
+      'image_url': imageUrl,
+      'lat': lat,
+      'lng': lng,
       'created_at': createdAt,
       'updated_at': updatedAt,
     };
