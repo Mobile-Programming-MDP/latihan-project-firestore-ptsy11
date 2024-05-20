@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:notesapp/models/note.dart';
+import 'package:notes/models/note.dart';
 import 'package:path/path.dart' as path;
 
 class NoteService {
@@ -15,7 +15,7 @@ class NoteService {
   static Future<String?> uploadImage(XFile file) async {
     try {
       String fileName = path.basename(file.path);
-      Reference ref = _storage.ref().child('images').child('/${fileName}');
+      Reference ref = _storage.ref().child('images').child('/$fileName');
       UploadTask uploadTask;
 
       if (kIsWeb) {
@@ -37,6 +37,8 @@ class NoteService {
       'title': note.title,
       'description': note.description,
       'image_url': note.imageUrl,
+      'lat': note.lat,
+      'lng': note.lng,
       'created_at': FieldValue.serverTimestamp(),
       'updated_at': FieldValue.serverTimestamp(),
     };
