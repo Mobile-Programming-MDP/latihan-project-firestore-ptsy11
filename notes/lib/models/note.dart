@@ -4,7 +4,6 @@ class Note {
   String? id;
   final String title;
   final String description;
-  // KARENA OPSIONAL BOLEH ADA BOLEH NGGAK
   String? imageUrl;
   String? lat;
   String? lng;
