@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:notes/models/note.dart';
+import 'package:notes/screens/google_maps_screen.dart';
+import 'package:notes/screens/map_screen.dart';
 import 'package:notes/services/note_service.dart';
 import 'package:notes/widgets/note_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
 
 class NoteListScreen extends StatefulWidget {
-  const NoteListScreen({super.key});
+  final VoidCallback onThemeSwitch;
+  final bool isDarkMode;
+
+  const NoteListScreen({
+    Key? key,
+    required this.onThemeSwitch,
+    required this.isDarkMode,
+  }) : super(key: key);
 
   @override
   State<NoteListScreen> createState() => _NoteListScreenState();
@@ -17,6 +27,14 @@ class _NoteListScreenState extends State<NoteListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Notes'),
+        actions: [
+          Switch(
+            value: widget.isDarkMode,
+            onChanged: (value) {
+              widget.onThemeSwitch();
+            },
+          ),
+        ],
       ),
       body: const NoteList(),
       floatingActionButton: FloatingActionButton(
@@ -36,11 +54,11 @@ class _NoteListScreenState extends State<NoteListScreen> {
 }
 
 class NoteList extends StatelessWidget {
-  const NoteList({super.key});
+  const NoteList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
+    return StreamBuilder<List<Note>>(
       stream: NoteService.getNoteList(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
@@ -52,9 +70,14 @@ class NoteList extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           default:
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(
+                child: Text('No notes available'),
+              );
+            }
             return ListView(
               padding: const EdgeInsets.only(bottom: 80),
-              children: snapshot.data!.map((document) {
+              children: snapshot.data!.map<Widget>((document) {
                 return Card(
                   child: Column(
                     children: [
@@ -88,10 +111,20 @@ class NoteList extends StatelessWidget {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            // ambil data maps
                             document.lat != null && document.lng != null
                                 ? InkWell(
                                     onTap: () {
-                                      openMap(document.lat, document.lng);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              GoogleMapsScreen(
+                                            document.lat!,
+                                            document.lng!,
+                                          ),
+                                        ),
+                                      );
                                     },
                                     child: const Padding(
                                       padding:
@@ -115,6 +148,15 @@ class NoteList extends StatelessWidget {
                                 child: Icon(Icons.delete),
                               ),
                             ),
+                            InkWell(
+                              onTap: () {
+                                shareContent(document);
+                              },
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                                child: Icon(Icons.share),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -128,15 +170,28 @@ class NoteList extends StatelessWidget {
     );
   }
 
-  Future<void> openMap(String? lat, String? lng) async {
+  Future<void> openMap(String lat, String lng) async {
     Uri uri =
-        Uri.parse("https://www.google.com/maps/search/?api=1&query=$lat, $lng");
+        Uri.parse("https://www.google.com/maps/search/?api=1&query=$lat,$lng");
     if (!await launchUrl(uri)) {
       throw Exception('Could not launch $uri');
     }
   }
 
-  showAlertDialog(BuildContext context, Note document) {
+  void shareContent(Note document) {
+    String content = 'Note Title: ${document.title}\n'
+        'Description: ${document.description}';
+    if (document.imageUrl != null) {
+      content += '\nImage: ${document.imageUrl}';
+    }
+    if (document.lat != null && document.lng != null) {
+      content +=
+          '\nLocation: https://www.google.com/maps/search/?api=1&query=${document.lat},${document.lng}';
+    }
+    Share.share(content);
+  }
+
+  void showAlertDialog(BuildContext context, Note document) {
     // set up the buttons
     Widget cancelButton = ElevatedButton(
       child: const Text("No"),

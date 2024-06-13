@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "552097846593",
+    "project_id": "notesapptasya",
+    "storage_bucket": "notesapptasya.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:552097846593:android:2fa5730106985260f47dc0",
+        "android_client_info": {
+          "package_name": "com.example.notes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAyuBeSAQ0JBnwwzloRzPlY1Fv4DdpU7g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

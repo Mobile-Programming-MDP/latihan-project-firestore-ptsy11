@@ -1,9 +1,6 @@
 import 'dart:async';
-import 'dart:ffi';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class GoogleMapsScreen extends StatefulWidget {
@@ -17,13 +14,13 @@ class GoogleMapsScreen extends StatefulWidget {
 }
 
 class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
-  final Completer<GoogleMapController> _completer = Completer();
+  final Completer<GoogleMapController> _controller = Completer();
   late CameraPosition _cameraPosition;
   late Set<Marker> _markers;
   late MarkerId _markerId;
 
   @override
-  void iniState() {
+  void initState() {
     super.initState();
     _cameraPosition = CameraPosition(
       target: LatLng(
@@ -36,12 +33,14 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
     _markerId = MarkerId(widget.lat.toString() + widget.lng.toString());
     _markers.add(
       Marker(
-        markerId: markerId,
+        markerId: _markerId,
         position: LatLng(
           double.parse(widget.lat.toString()),
           double.parse(widget.lng.toString()),
         ),
-        infoWindow: const InfoWindow(title: 'Your Location', snippet: '...'
+        infoWindow: const InfoWindow(
+          title: 'Your location',
+          snippet: '...',
         ),
       ),
     );
@@ -60,27 +59,26 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
         initialCameraPosition: _cameraPosition,
         markers: _markers,
         onMapCreated: (GoogleMapController controller) {
-          _controller complete(controller);
-          Future.delayed(const Duration(microseconds: 500), (){
+          _controller.complete(controller);
+          Future.delayed(const Duration(microseconds: 500), () {
             controller.showMarkerInfoWindow(_markerId);
           });
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _goToLocation, 
-        label: const Text("To Your Location"),
+        onPressed: _goToLocation,
+        label: const Text("To your location"),
         icon: const Icon(Icons.directions_car),
-        ),
+      ),
     );
   }
 
-
-Future<void> _goToLocation() async {
-  final GoogleMapController controller = await _controller.future;
-  await controller.animateCamera(
-    CameraUpdate.newCameraPosition(
-      _cameraPosition,
-    ),
-  );
-}
+  Future<void> _goToLocation() async {
+    final GoogleMapController controller = await _controller.future;
+    await controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        _cameraPosition,
+      ),
+    );
+  }
 }

@@ -33,10 +33,7 @@ class DefaultFirebaseOptions {
           'you can reconfigure this by running the FlutterFire CLI again.',
         );
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -50,19 +47,29 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyA6QpT0u5aqX8_tY0kYPbCRwhMvQ-f0ddw',
-    appId: '1:848539166243:web:f7db88a935bf34da3c3396',
-    messagingSenderId: '848539166243',
-    projectId: 'notes-d2a3a',
-    authDomain: 'notes-d2a3a.firebaseapp.com',
-    storageBucket: 'notes-d2a3a.appspot.com',
+    apiKey: 'AIzaSyDlUg1PUJ8_IeCUUjQF3wnEn98e3XDAC8c',
+    appId: '1:552097846593:web:f3696006411c205df47dc0',
+    messagingSenderId: '552097846593',
+    projectId: 'notesapptasya',
+    authDomain: 'notesapptasya.firebaseapp.com',
+    storageBucket: 'notesapptasya.appspot.com',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyD_XHI67JZapFYiyQC-GLFebcQ9JWkA0SE',
-    appId: '1:848539166243:android:51ada6d9b70cbc473c3396',
-    messagingSenderId: '848539166243',
-    projectId: 'notes-d2a3a',
-    storageBucket: 'notes-d2a3a.appspot.com',
+    apiKey: 'AIzaSyAAyuBeSAQ0JBnwwzloRzPlY1Fv4DdpU7g',
+    appId: '1:552097846593:android:2fa5730106985260f47dc0',
+    messagingSenderId: '552097846593',
+    projectId: 'notesapptasya',
+    storageBucket: 'notesapptasya.appspot.com',
   );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyDlUg1PUJ8_IeCUUjQF3wnEn98e3XDAC8c',
+    appId: '1:552097846593:web:1386531bc543ba76f47dc0',
+    messagingSenderId: '552097846593',
+    projectId: 'notesapptasya',
+    authDomain: 'notesapptasya.firebaseapp.com',
+    storageBucket: 'notesapptasya.appspot.com',
+  );
+
 }
